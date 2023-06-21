@@ -1,4 +1,4 @@
-# 0.5: New note diagram
+# 0.4: New note diagram
 
 ```mermaid
 sequenceDiagram
