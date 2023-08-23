@@ -1,42 +1,42 @@
 import React from 'react'
 
 const error = {
-    color: 'red',
-    background: 'lightgrey',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10
+  color: 'red',
+  background: 'lightgrey',
+  fontSize: 20,
+  borderStyle: 'solid',
+  borderRadius: 5,
+  padding: 10,
+  marginBottom: 10
 }
 
 
 const success = {
-    color: 'green',
-    background: 'lightgrey',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10
+  color: 'green',
+  background: 'lightgrey',
+  fontSize: 20,
+  borderStyle: 'solid',
+  borderRadius: 5,
+  padding: 10,
+  marginBottom: 10
 }
 
 const Notification = ({ errorMessage, successMessage }) => {
-    if (successMessage === null && errorMessage === null) {
-        return null
-    } else if (successMessage) {
-        return (
-            <div id='success' style={success}>
-                {successMessage}
-            </div>
-        )
-    } else {
-        return (
-            <div id='error' style={error}>
-                {errorMessage}
-            </div>
-        )
-    }
+  if (successMessage === null && errorMessage === null) {
+    return null
+  } else if (successMessage) {
+    return (
+      <div id='success' style={success}>
+        {successMessage}
+      </div>
+    )
+  } else {
+    return (
+      <div id='error' style={error}>
+        {errorMessage}
+      </div>
+    )
+  }
 }
 
 export default Notification

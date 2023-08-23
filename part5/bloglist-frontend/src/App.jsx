@@ -20,7 +20,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs => {
       setBlogs(blogs)
-    })  
+    })
   }, [])
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginService.login({
         username, password,
@@ -62,15 +62,15 @@ const App = () => {
 
   const createBlog = async (newBlog) => {
     try {
-    blogFormRef.current.toggleVisibility()
-    const createdBlog = await blogService.create(newBlog)
-    createdBlog.user = user
-    setSuccessMessage(`Blog ${newBlog.title} by ${newBlog.author} added`)
-    setBlogs(blogs.concat(createdBlog))
-    setErrorMessage(null)
-    setTimeout(() => {
-      setSuccessMessage(null)
-    }, 5000)
+      blogFormRef.current.toggleVisibility()
+      const createdBlog = await blogService.create(newBlog)
+      createdBlog.user = user
+      setSuccessMessage(`Blog ${newBlog.title} by ${newBlog.author} added`)
+      setBlogs(blogs.concat(createdBlog))
+      setErrorMessage(null)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
     } catch(exception) {
       setErrorMessage(`Cannot add blog ${newBlog.title}`)
       setSuccessMessage(null)
@@ -87,15 +87,15 @@ const App = () => {
     return (
       <div>
         <div style={hideWhenVisible}>
-          <button onClick={()=> setLoginVisible(true)}>Log in</button>
+          <button onClick={() => setLoginVisible(true)}>Log in</button>
         </div>
         <div style={showWhenVisible}>
-          <LoginForm 
-          username={username}
-          password={password}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handleSubmit={handleLogin}
+          <LoginForm
+            username={username}
+            password={password}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handleSubmit={handleLogin}
           />
           <button onClick={() => setLoginVisible(false)}>Cancel</button>
         </div>
@@ -103,28 +103,51 @@ const App = () => {
     )
   }
 
+  const addLike = async id => {
+    const blogToUpdate = blogs.find(blogs => blogs.id === id)
+    const updatedBlog = { ...blogToUpdate, likes: blogToUpdate.likes + 1 }
+    await blogService.update(id, updatedBlog)
+    setBlogs(blogs.map(blog => blog.id === id ? updatedBlog : blog))
+  }
+
+  const removeBlog = async id => {
+    const blogToDelete = blogs.find(blogs => blogs.id === id)
+    if (window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}?`)) {
+      await blogService.remove(id)
+      setBlogs(blogs.filter(blog => blog.id !== id))
+    }
+  }
+
+  const sortBlogs = () => {
+    blogs.sort((a, b) => (b.likes - a.likes))
 
     return (
-      <div>
-        <Notification errorMessage={errorMessage} successMessage={successMessage} />
-        {!user && <div> <h2>Log in to application</h2>
-          {loginForm()} </div>}
-        {user && <div>
-          <h2>blogs</h2>
-          <p>{user.name} logged in</p>
-          <button onClick={handleLogout}>Logout</button>
-          <Togglable buttonLabel="New blog" ref={blogFormRef}>
-            <BlogForm 
-              createBlog={createBlog} 
-            />
-          </Togglable>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      blogs.map(blog => (
+        <Blog key={blog.id} blog={blog} addLike={() => addLike(blog.id)} removeBlog={() => removeBlog(blog.id)} />
+      ))
+    )
+  }
+
+
+  return (
+    <div>
+      <Notification errorMessage={errorMessage} successMessage={successMessage} />
+      {!user && <div> <h2>Log in to application</h2>
+        {loginForm()} </div>}
+      {user && <div>
+        <h2>blogs</h2>
+        <p>{user.name} logged in</p>
+        <button onClick={handleLogout}>Logout</button>
+        <Togglable buttonLabel="New blog" ref={blogFormRef}>
+          <BlogForm
+            createBlog={createBlog}
+          />
+        </Togglable>
+        {sortBlogs()}
       </div>}
     </div>
-  
-    )
+
+  )
 }
 
 export default App
