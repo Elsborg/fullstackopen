@@ -1,37 +1,84 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { initializeBlogs } from '../reducers/blogReducer'
+import { login } from '../reducers/loginReducer'
+import styled from 'styled-components'
 
-const LoginForm = ({ login }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+const LoginFormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  margin: 0 auto;
+`
+
+const FormTitle = styled.h2`
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+`
+
+const FormInput = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box; /* Add this line */
+`
+
+const FormButton = styled.button`
+  width: 100%;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-sizing: border-box; /* Add this line */
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`
+
+const LoginForm = () => {
+  const dispatch = useDispatch()
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    await login(username, password)
+    const username = event.target.username.value
+    const password = event.target.password.value
+    event.target.username.value = ''
+    event.target.password.value = ''
+    dispatch(login(username, password))
+    dispatch(initializeBlogs())
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        username
-        <input
+    <LoginFormContainer>
+      <FormTitle>Login</FormTitle>
+      <form onSubmit={handleSubmit}>
+        <FormInput
+          type="text"
+          name="username"
           id="username"
-          value={username}
-          onChange={({ target }) => setUsername(target.value)}
+          placeholder="username"
+          required
         />
-      </div>
-      <div>
-        password
-        <input
-          id="password"
+        <FormInput
           type="password"
-          value={password}
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button id="login-button" type="submit">
-        login
-      </button>
-    </form>
+          name="password"
+          id="password"
+          placeholder="password"
+          required
+        />{' '}
+        <br />
+        <FormButton type="submit">Login</FormButton>
+      </form>
+    </LoginFormContainer>
   )
 }
 

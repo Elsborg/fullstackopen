@@ -27,7 +27,7 @@ const getBackgroundColor = (type) => {
 }
 
 const NotificationContainer = styled.div`
-  position: absolute;
+  position: fixed;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
